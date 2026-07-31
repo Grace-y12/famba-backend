@@ -1,0 +1,17 @@
+{
+  "name": "ridehail-backend",
+  "version": "0.1.0",
+  "description": "Verified ride-hailing marketplace — backend",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node src/modules/identity/driver-kyc.test.js && node src/modules/identity/phone-auth.test.js && node src/modules/identity/tokens.test.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "@supabase/supabase-js": "^2.45.0",
+    "jsonwebtoken": "^9.0.2",
+    "dotenv": "^16.4.5"
+  }
+}
