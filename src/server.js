@@ -28,6 +28,11 @@ app.get('/health', async (_req, res) => {
   }
 });
 
+// --- 1b. Root — so visiting the base URL isn't confusing ---
+app.get('/', (_req, res) => {
+  res.json({ service: 'ridehail-backend', status: 'up' });
+});
+
 // --- 2. Rider signup (phone + OTP) ---
 app.use('/signup', createSignupRoutes(db.supabase));
 
