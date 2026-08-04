@@ -9,9 +9,10 @@
     "test": "node src/modules/identity/driver-kyc.test.js && node src/modules/identity/phone-auth.test.js && node src/modules/identity/tokens.test.js"
   },
   "dependencies": {
-    "express": "^4.19.2",
     "@supabase/supabase-js": "^2.45.0",
-    "jsonwebtoken": "^9.0.2",
-    "dotenv": "^16.4.5"
+    "cors": "^2.8.6",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2"
   }
 }

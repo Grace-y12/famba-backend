@@ -13,7 +13,9 @@ const createMarketplaceRoutes = require('./modules/marketplace/marketplace-route
 const createCourierRoutes = require('./modules/courier/courier-routes');
 const sms = require('./modules/sms/sms');
 
+const cors = require('cors');
 const app = express();
+app.use(cors({ origin: process.env.WEB_ORIGIN }));
 app.use(express.json());
 
 // --- 1. Health check ---
