@@ -130,13 +130,23 @@ module.exports = function createDriverRoutes(supabase, requireAuth) {
   });
 
   // --- Readiness: does the driver meet every requirement? ---
-  router.get('/readiness', async (req, res) => {
+    router.get('/readiness', async (req, res) => {
     const { data: docs, error } = await supabase
       .from('kyc_documents')
       .select('kind, status, expires_on')
       .eq('user_id', req.user.id);
     if (error) return res.status(500).json({ error: 'could_not_evaluate' });
-    res.json(kyc.evaluateApprovalReadiness(docs || []));
+
+    const { data: profile } = await supabase
+      .from('driver_profiles')
+      .select('status')
+      .eq('user_id', req.user.id)
+      .single();
+
+    res.json({
+      ...kyc.evaluateApprovalReadiness(docs || []),
+      status: profile?.status || 'registered',
+    });
   });
 
   // --- Submit for review (driver asks to be reviewed) ---
@@ -148,8 +158,22 @@ module.exports = function createDriverRoutes(supabase, requireAuth) {
     if (!readiness.ready) {
       return res.status(400).json({ error: 'not_ready', missing: readiness.missing });
     }
-    const moved = await transitionDriver(supabase, userId, 'under_review');
+        const moved = await transitionDriver(supabase, userId, 'under_review');
     if (!moved.ok) return res.status(400).json({ error: moved.reason });
+
+    // DEMO ONLY — approves a few seconds after submission so the flow can be
+    // walked end to end without an agent. Remove before launch.
+    if (process.env.DEMO_AUTO_APPROVE === 'true') {
+      setTimeout(async () => {
+        try {
+          await transitionDriver(supabase, userId, 'approved', {
+            approved_at: new Date().toISOString(),
+          });
+          console.log('[demo-auto-approve] approved', userId);
+        } catch (e) { console.error('[demo-auto-approve]', e.message); }
+      }, 4000);
+    }
+
     res.json({ status: 'under_review' });
   });
 

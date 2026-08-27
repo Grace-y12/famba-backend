@@ -29,9 +29,9 @@ const REQUIRED_DRIVER_DOCS = [
   'national_id', // OR 'passport'
   'drivers_licence',
   'vehicle_registration',
-  'roadworthiness',
-  'insurance',
-  'police_clearance',
+  //'roadworthiness',
+  //'insurance',
+  //'police_clearance',
 ];
 
 // Allowed transitions. Anything not listed here is rejected.
@@ -78,9 +78,9 @@ function hasIdentityDoc(activeDocs) {
 const REQUIRED_NON_IDENTITY_DOCS = [
   'drivers_licence',
   'vehicle_registration',
-  'roadworthiness',
-  'insurance',
-  'police_clearance',
+  //'roadworthiness',
+  //'insurance',
+  //'police_clearance',
 ];
 
 /**

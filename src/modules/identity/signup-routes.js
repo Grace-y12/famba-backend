@@ -79,15 +79,17 @@ module.exports = function createSignupRoutes(supabase) {
       .eq('id', record.id);
 
     // Create the user if they don't already exist; otherwise return existing.
+    // full_name is selected because the client uses it to decide whether the
+    // one-time KYC screen (name + national ID) still needs to be shown.
     const { data: existing } = await supabase
-      .from('users').select('id, phone').eq('phone', phone).limit(1);
+      .from('users').select('id, phone, full_name').eq('phone', phone).limit(1);
 
     let user = existing && existing[0];
     if (!user) {
       const { data: created, error: insErr } = await supabase
         .from('users')
         .insert({ phone, phone_verified: true })
-        .select('id, phone')
+        .select('id, phone, full_name')
         .single();
       if (insErr) {
         console.error('[signup/verify insert]', insErr.message);
@@ -106,6 +108,9 @@ module.exports = function createSignupRoutes(supabase) {
       status: 'verified',
       user_id: user.id,
       phone: user.phone,
+      // false -> the client routes the user through the KYC screen before the
+      // app proper. A returning user who already gave their name skips it.
+      profile_complete: !!user.full_name,
       token: tokens.issueToken(user.id, 'rider'),
     });
   });
